@@ -2,18 +2,13 @@
 #
 #            Regression with an aggregated response
 #
-#                Authors : Pierre Masselot
+#                Author : Pierre Masselot
 #
 #                     Date : 2017
 #
 #	         Dependencies : package 'forecast'
 #
 ################################################################################
-
-# Software composed of two main functions (see examples below):
-#   1. NWsmooth: aggregates a data series through Nadaraya-Watson kernel smoothing
-#   2. tsRegression: applies time series regression
-# In addition, several functions for Kernels are provided for use with NWsmooth, as well as a predict function for the model fitted by tsRegression
 
 ##############################################################
 #
@@ -205,31 +200,3 @@ predict.tsreg <- function(object, newdata, na.action)
    }
    return(as.vector(pred))
 }
-  
-################################################################################
-#
-#  Simple example of how to use the functions above with the chicagoNMMAPAS data from the dlnm package
-#
-################################################################################
-
-library(forecast)
-library(dlnm)
-library(splines)
-
-data(chicagoNMMAPS)
-
-# Aggregating the Cardiovascular death series using the Epanechnikov kernel on future values with H = 7
-ytilde <- NWsmooth(chicagoNMMAPS$cvd, Kernel = Kepanechnikov, h = 7, side = 3)
-
-## Apply the DLNM for aggregated response for assessing the relationship between CVD deaths and mean temperature
-# Construct crossbasis for DLNM
-Tcb <- crossbasis(chicagoNMMAPS$temp, lag = 21, argvar = list(knots = c(-4, 20, 24)), arglag = list(knots = c(3, 8, 13)))
-# Include smooth time component in the model
-mod.data <- data.frame(ytilde = log(ytilde$y), Tcb, time = ns(chicagoNMMAPS$time,df=8*14))
-# Fit model
-fit <- tsRegression(ytilde ~ ., data = mod.data, period = 365)
-# Obtain fitted values
-yhat <- exp(predict(fit))
-# Plot the surface
-Tcp <- crosspred(Tcb, coef = fit$coef[colnames(Tcb)], vcov = fit$var.coef[colnames(Tcb),colnames(Tcb)], model.link = "log")
-plot(Tcp, ptype="contour", xlab="Temperature (°C)", ylab="Lag (Day)")
