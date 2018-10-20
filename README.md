@@ -11,9 +11,9 @@ In this paper, it is proposed to temporally aggregate the health response series
 2. Perform a time series regression model on the aggregated response, *i.e.* by modelling residuals through an ARIMA model.
 
 The software is composed of three main functions (see examples below):
-1. `R NWsmooth`: aggregates a data series through Nadaraya-Watson kernel smoothing;
-2. `R tsRegression`: applies time series regression;
-3. `R predict.tsreg`: predict method for results from `R tsRegression`. 
+1. `NWsmooth`: aggregates a data series through Nadaraya-Watson kernel smoothing;
+2. `tsRegression`: applies time series regression;
+3. `predict.tsreg`: predict method for results from `tsRegression`. 
 In addition, several functions for Kernels are provided for use with NWsmooth.
 
 Description of input parameters and output of each function can be found in the header of each function in the file tsRegression.R
